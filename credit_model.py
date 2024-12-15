@@ -71,6 +71,9 @@ class CreditScoringModel:
         self._fit_ordinal_encoder(training_df)
         self._apply_ordinal_encoding(training_df)
 
+        print(training_df.columns)
+        print(training_df.info())
+
         train_X = training_df[
             training_df.columns.drop(self.target)
             .drop("event_timestamp")

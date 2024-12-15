@@ -64,9 +64,10 @@ class CreditScoringModel:
         joblib.dump(self.classifier, self.model_filename)
 
     def _get_training_features(self, loans):
-        training_df = self.fs.get_historical_features(
+        training_df_test = self.fs.get_historical_features(
             entity_df=loans, features=self.feast_features
-        ).to_df()
+        )
+        training_df = training_df_test.to_df()
 
         self._fit_ordinal_encoder(training_df)
         self._apply_ordinal_encoding(training_df)
@@ -125,10 +126,13 @@ class CreditScoringModel:
         dob_ssn = request["dob_ssn"][0]
         loan_amnt= request["loan_amnt"][0]
 
-        return self.fs.get_online_features(
+        self.fs.refresh_registry()
+        test = self.fs.get_online_features(
             entity_rows=[{"zipcode": zipcode, "dob_ssn": dob_ssn, "loan_amnt": loan_amnt}],
             features=self.feast_features,
-        ).to_dict()
+        )
+        print(test)
+        return test.to_dict()
 
     def is_model_trained(self):
         try:

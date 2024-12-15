@@ -64,16 +64,12 @@ class CreditScoringModel:
         joblib.dump(self.classifier, self.model_filename)
 
     def _get_training_features(self, loans):
-        training_df_test = self.fs.get_historical_features(
+        training_df = self.fs.get_historical_features(
             entity_df=loans, features=self.feast_features
-        )
-        training_df = training_df_test.to_df()
+        ).to_df()
 
         self._fit_ordinal_encoder(training_df)
         self._apply_ordinal_encoding(training_df)
-
-        print(training_df.columns)
-        print(training_df.info())
 
         train_X = training_df[
             training_df.columns.drop(self.target)
@@ -124,11 +120,12 @@ class CreditScoringModel:
     def _get_online_features_from_feast(self, request):
         zipcode = request["zipcode"][0]
         dob_ssn = request["dob_ssn"][0]
-        loan_amnt= request["loan_amnt"][0]
+        #loan_amnt= request["loan_amnt"][0]
 
         self.fs.refresh_registry()
         test = self.fs.get_online_features(
-            entity_rows=[{"zipcode": zipcode, "dob_ssn": dob_ssn, "loan_amnt": loan_amnt}],
+            #entity_rows=[{"zipcode": zipcode, "dob_ssn": dob_ssn, "loan_amnt": loan_amnt}],
+            entity_rows=[{"zipcode": zipcode, "dob_ssn": dob_ssn}],
             features=self.feast_features,
         )
         print(test)

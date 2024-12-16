@@ -120,12 +120,12 @@ class CreditScoringModel:
     def _get_online_features_from_feast(self, request):
         zipcode = request["zipcode"][0]
         dob_ssn = request["dob_ssn"][0]
-        #loan_amnt= request["loan_amnt"][0]
+        loan_amnt= request["loan_amnt"][0]
 
         self.fs.refresh_registry()
         test = self.fs.get_online_features(
-            #entity_rows=[{"zipcode": zipcode, "dob_ssn": dob_ssn, "loan_amnt": loan_amnt}],
-            entity_rows=[{"zipcode": zipcode, "dob_ssn": dob_ssn}],
+            entity_rows=[{"zipcode": zipcode, "dob_ssn": dob_ssn, "loan_amnt": loan_amnt}],
+            #entity_rows=[{"zipcode": zipcode, "dob_ssn": dob_ssn}],
             features=self.feast_features,
         )
         print(test)
